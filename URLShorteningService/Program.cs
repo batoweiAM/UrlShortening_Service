@@ -1,4 +1,6 @@
 
+using Serilog;
+
 namespace URLShorteningService
 {
     public class Program
@@ -6,6 +8,14 @@ namespace URLShorteningService
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext());
+
+
 
             // Add services to the container
             builder.Services.AddControllers();
