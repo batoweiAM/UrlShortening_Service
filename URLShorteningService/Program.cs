@@ -1,5 +1,7 @@
 
+using Microsoft.OpenApi.Models;
 using Serilog;
+using URLShorteningService.Infrastructure.Persistence;
 
 namespace URLShorteningService
 {
@@ -7,45 +9,71 @@ namespace URLShorteningService
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-
-            builder.Host.UseSerilog((context, services, configuration) => configuration
-            .ReadFrom.Configuration(context.Configuration)
-            .ReadFrom.Services(services)
-            .Enrich.FromLogContext());
-
-
-
-            // Add services to the container
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services
-                .AddApplication()
-                .AddInfrastructure(builder.Configuration);
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline
-            if (app.Environment.IsDevelopment())
+            try
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var builder = WebApplication.CreateBuilder(args);
 
-                // Initialize and seed database
-                using var scope = app.Services.CreateScope();
-                var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
-                await initialiser.InitialiseAsync();
-                await initialiser.SeedAsync();
+                // Configure Serilog
+                Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(builder.Configuration)
+                    .CreateLogger();
+
+                builder.Host.UseSerilog();
+
+                // Add services to the container
+                builder.Services.AddControllers();
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = "URL Shortener API",
+                        Version = "v1",
+                        Description = "A simple URL shortening service API"
+                    });
+                });
+
+                builder.Services
+                    .AddApplication()
+                    .AddInfrastructure(builder.Configuration);
+
+                // Add health checks
+                builder.Services.AddHealthChecks()
+                    .AddDbContextCheck<ApplicationDbContext>()
+                    .AddRedis(builder.Configuration["RedisCacheSettings:ConnectionString"]!);
+
+                var app = builder.Build();
+
+                // Configure the HTTP request pipeline
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+
+                    // Initialize and seed database
+                    using var scope = app.Services.CreateScope();
+                    var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
+                    await initialiser.InitialiseAsync();
+                    await initialiser.SeedAsync();
+                }
+
+                app.UseSerilogRequestLogging();
+                app.UseHttpsRedirection();
+                app.UseAuthorization();
+
+                app.MapControllers();
+                app.MapHealthChecks("/health");
+
+                await app.RunAsync();
             }
-
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-            app.MapControllers();
-
-            await app.RunAsync();
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }

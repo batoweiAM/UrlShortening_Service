@@ -19,12 +19,9 @@ namespace URLShorteningService.Application
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            services.Configure<RedisCacheSettings>(
-            configuration.GetSection("RedisCacheSettings"));
-                    services.Configure<UrlSettings>(
-                        configuration.GetSection("UrlSettings"));
 
             return services;
         }
     }
+
 }

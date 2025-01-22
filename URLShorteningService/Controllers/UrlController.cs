@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
+﻿using MediatR;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using URLShorteningService.Application.UrlMappings.Commands.CreateUrlMapping;
+using URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping;
+using URLShorteningService.Infrastructure.RateLimiting;
 
 namespace URLShorteningService.API.Controllers
 {
