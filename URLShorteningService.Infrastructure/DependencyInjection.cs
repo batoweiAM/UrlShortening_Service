@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using URLShorteningService.Application.Common.Interfaces;
 using URLShorteningService.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace URLShorteningService.Infrastructure
 {

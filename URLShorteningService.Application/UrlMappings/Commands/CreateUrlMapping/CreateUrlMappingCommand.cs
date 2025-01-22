@@ -1,9 +1,12 @@
-﻿using System;
+﻿using FluentValidation;
+using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using URLShorteningService.Application.UrlMappings.DTOs;
+using URLShorteningService.Domain.Common;
 
 namespace URLShorteningService.Application.UrlMappings.Commands.CreateUrlMapping
 {

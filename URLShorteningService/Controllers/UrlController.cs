@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using URLShorteningService.Application.UrlMappings.Commands.CreateUrlMapping;
 using URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping;
+using URLShorteningService.Application.UrlMappings.Queries.GetUrlStats;
 using URLShorteningService.Infrastructure.RateLimiting;
 
 namespace URLShorteningService.API.Controllers
