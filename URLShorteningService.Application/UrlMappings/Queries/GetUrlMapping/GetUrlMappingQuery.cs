@@ -33,7 +33,7 @@ namespace URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping
                 if (urlMapping != null)
                 {
                     await _urlRepository.UpdateAsync(urlMapping, cancellationToken);
-                    return Result.Success(new UrlMappingDto(
+                    return Result<UrlMappingDto>.Success(new UrlMappingDto(
                         urlMapping.Id,
                         urlMapping.ShortCode,
                         urlMapping.LongUrl,
@@ -45,13 +45,13 @@ namespace URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping
 
             var mapping = await _urlRepository.GetByShortCodeAsync(request.ShortCode, cancellationToken);
             if (mapping == null)
-                return Result.Failure<UrlMappingDto>(DomainErrors.UrlMapping.NotFound);
+                return Result<UrlMappingDto>.Failure(DomainErrors.UrlMapping.NotFound);
 
             if (mapping.IsExpired())
-                return Result.Failure<UrlMappingDto>(DomainErrors.UrlMapping.Expired);
+                return Result<UrlMappingDto>.Failure(DomainErrors.UrlMapping.Expired);
 
             if (!mapping.IsActive)
-                return Result.Failure<UrlMappingDto>(DomainErrors.UrlMapping.Inactive);
+                return Result<UrlMappingDto>.Failure(DomainErrors.UrlMapping.Inactive);
 
             mapping.IncrementAccessCount();
             await _urlRepository.UpdateAsync(mapping, cancellationToken);
@@ -59,7 +59,7 @@ namespace URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping
             await _cacheService.SetAsync($"url_{mapping.ShortCode}", mapping.LongUrl,
                 TimeSpan.FromHours(24), cancellationToken);
 
-            return Result.Success(new UrlMappingDto(
+            return Result<UrlMappingDto>.Success(new UrlMappingDto(
                 mapping.Id,
                 mapping.ShortCode,
                 mapping.LongUrl,

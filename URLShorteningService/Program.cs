@@ -1,6 +1,8 @@
 
 using Microsoft.OpenApi.Models;
 using Serilog;
+using URLShorteningService.Application;
+using URLShorteningService.Infrastructure;
 using URLShorteningService.Infrastructure.Persistence;
 
 namespace URLShorteningService
@@ -44,17 +46,15 @@ namespace URLShorteningService
 
                 var app = builder.Build();
 
-                // Configure the HTTP request pipeline
+              
                 if (app.Environment.IsDevelopment())
                 {
                     app.UseSwagger();
                     app.UseSwaggerUI();
 
-                    // Initialize and seed database
                     using var scope = app.Services.CreateScope();
                     var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
                     await initialiser.InitialiseAsync();
-                    await initialiser.SeedAsync();
                 }
 
                 app.UseSerilogRequestLogging();

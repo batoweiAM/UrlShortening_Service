@@ -27,13 +27,13 @@ namespace URLShorteningService.Application.UrlMappings.Commands.CreateUrlMapping
         {
             var urlMappingResult = UrlMapping.Create(request.LongUrl, request.ExpiresAt);
             if (urlMappingResult.IsFailure)
-                return Result.Failure<UrlMappingDto>(urlMappingResult.Error);
+                return Result<UrlMappingDto>.Failure(urlMappingResult.Error);
 
             var urlMapping = await _urlRepository.AddAsync(urlMappingResult.Value, cancellationToken);
             await _cacheService.SetAsync($"url_{urlMapping.ShortCode}", urlMapping.LongUrl,
                 TimeSpan.FromHours(24), cancellationToken);
 
-            return Result.Success(new UrlMappingDto(
+            return Result<UrlMappingDto>.Success(new UrlMappingDto(
                 urlMapping.Id,
                 urlMapping.ShortCode,
                 urlMapping.LongUrl,

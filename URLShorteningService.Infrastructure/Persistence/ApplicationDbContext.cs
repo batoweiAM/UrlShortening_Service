@@ -37,10 +37,10 @@ namespace URLShorteningService.Infrastructure.Persistence
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedAt = _dateTime.UtcNow;
+                        entry.Entity.SetCreatedAt(_dateTime.UtcNow);
                         break;
                     case EntityState.Modified:
-                        entry.Entity.ModifiedAt = _dateTime.UtcNow;
+                        entry.Entity.SetModifiedAt(_dateTime.UtcNow);
                         break;
                 }
             }

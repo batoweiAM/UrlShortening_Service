@@ -26,9 +26,9 @@ namespace URLShorteningService.Application.UrlMappings.Queries.GetUrlStats
             var urlMapping = await _urlRepository.GetByShortCodeAsync(request.ShortCode, cancellationToken);
 
             if (urlMapping == null)
-                return Result.Failure<UrlStatsDto>(DomainErrors.UrlMapping.NotFound);
+                return Result<UrlStatsDto>.Failure(DomainErrors.UrlMapping.NotFound);
 
-            return Result.Success(new UrlStatsDto(
+            return Result<UrlStatsDto>.Success(new UrlStatsDto(
                 urlMapping.Stats.AccessCount,
                 urlMapping.Stats.LastAccessedAt,
                 urlMapping.Stats.CreatedAt));
