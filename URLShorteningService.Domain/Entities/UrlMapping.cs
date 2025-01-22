@@ -30,14 +30,14 @@ namespace URLShorteningService.Domain.Entities
         public static Result<UrlMapping> Create(string longUrl, DateTime? expiresAt = null)
         {
             if (string.IsNullOrWhiteSpace(longUrl))
-                return Result.Failure<UrlMapping>(DomainErrors.UrlMapping.EmptyUrl);
+                return Result<UrlMapping>.Failure(DomainErrors.UrlMapping.EmptyUrl);
 
             if (!Uri.TryCreate(longUrl, UriKind.Absolute, out _))
-                return Result.Failure<UrlMapping>(DomainErrors.UrlMapping.InvalidUrl);
+                return Result<UrlMapping>.Failure(DomainErrors.UrlMapping.InvalidUrl);
 
             var shortCode = GenerateShortCode();
 
-            return Result.Success(new UrlMapping(longUrl, shortCode, expiresAt));
+            return Result<UrlMapping>.Success(new UrlMapping(longUrl, shortCode, expiresAt));
         }
 
         private static string GenerateShortCode()
