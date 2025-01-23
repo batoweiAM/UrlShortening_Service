@@ -16,14 +16,14 @@ namespace URLShorteningService
             {
                 var builder = WebApplication.CreateBuilder(args);
 
-                // Configure Serilog
+     
                 Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(builder.Configuration)
                     .CreateLogger();
 
                 builder.Host.UseSerilog();
 
-                // Add services to the container
+             
                 builder.Services.AddControllers();
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen(c =>
@@ -36,11 +36,20 @@ namespace URLShorteningService
                     });
                 });
 
+               
+                builder.Services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(builder =>
+                    {
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    });
+                });
+
                 builder.Services
                     .AddApplication()
                     .AddInfrastructure(builder.Configuration);
 
-                // Add health checks
+          
                 builder.Services.AddHealthChecks()
                     .AddDbContextCheck<ApplicationDbContext>()
                     .AddRedis(builder.Configuration["RedisCacheSettings:ConnectionString"]!);
@@ -63,6 +72,9 @@ namespace URLShorteningService
 
                 app.UseSerilogRequestLogging();
                 app.UseHttpsRedirection();
+
+                app.UseCors();
+
                 app.UseAuthorization();
 
                 app.MapControllers();

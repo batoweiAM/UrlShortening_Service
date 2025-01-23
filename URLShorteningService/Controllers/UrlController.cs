@@ -49,7 +49,7 @@ namespace URLShorteningService.API.Controllers
             if (result.IsFailure)
                 return Problem(result.Error);
 
-            return Redirect(result.Value.LongUrl);
+            return Ok(result.Value.LongUrl);
         }
 
         [HttpGet("stats/{shortCode}")]
