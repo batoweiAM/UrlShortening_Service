@@ -53,9 +53,6 @@ namespace URLShorteningService.Application.UrlMappings.Queries.GetUrlMapping
             if (!mapping.IsActive)
                 return Result<UrlMappingDto>.Failure(DomainErrors.UrlMapping.Inactive);
 
-            mapping.IncrementAccessCount();
-            await _urlRepository.UpdateAsync(mapping, cancellationToken);
-
             await _cacheService.SetAsync($"url_{mapping.ShortCode}", mapping.LongUrl,
                 TimeSpan.FromHours(24), cancellationToken);
 
