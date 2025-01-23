@@ -32,10 +32,26 @@ namespace URLShorteningService.Infrastructure.Persistence.Repositories
             return urlMapping;
         }
 
+        //public async Task<UrlMapping> UpdateAsync(UrlMapping urlMapping, CancellationToken cancellationToken = default)
+        //{
+        //    _context.Entry(urlMapping).State = EntityState.Modified;
+        //    await _context.SaveChangesAsync(cancellationToken);
+        //    return urlMapping;
+        //}
+
         public async Task<UrlMapping> UpdateAsync(UrlMapping urlMapping, CancellationToken cancellationToken = default)
         {
-            _context.Entry(urlMapping).State = EntityState.Modified;
-            await _context.SaveChangesAsync(cancellationToken);
+            urlMapping.SetModifiedAt(DateTime.UtcNow);
+
+
+            if (urlMapping.Stats != null)
+            {
+                _context.Entry(urlMapping.Stats).State = EntityState.Modified; 
+            }
+
+            _context.Entry(urlMapping).State = EntityState.Modified; 
+
+            await _context.SaveChangesAsync(cancellationToken); 
             return urlMapping;
         }
     }
