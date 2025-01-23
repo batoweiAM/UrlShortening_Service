@@ -1,4 +1,5 @@
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using URLShorteningService.Application;
@@ -43,10 +44,13 @@ namespace URLShorteningService
                 builder.Services.AddHealthChecks()
                     .AddDbContextCheck<ApplicationDbContext>()
                     .AddRedis(builder.Configuration["RedisCacheSettings:ConnectionString"]!);
+                builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                {
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
 
                 var app = builder.Build();
 
-              
                 if (app.Environment.IsDevelopment())
                 {
                     app.UseSwagger();
