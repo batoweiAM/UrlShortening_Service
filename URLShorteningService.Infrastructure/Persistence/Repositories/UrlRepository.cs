@@ -41,12 +41,12 @@ namespace URLShorteningService.Infrastructure.Persistence.Repositories
 
         public async Task<UrlMapping> UpdateAsync(UrlMapping urlMapping, CancellationToken cancellationToken = default)
         {
-            urlMapping.SetModifiedAt(DateTime.UtcNow);
-
 
             if (urlMapping.Stats != null)
             {
-                _context.Entry(urlMapping.Stats).State = EntityState.Modified; 
+                urlMapping.Stats.SetModifiedAt(DateTime.UtcNow);
+                urlMapping.Stats.AccessCount++; 
+                urlMapping.Stats.LastAccessedAt = DateTime.UtcNow;
             }
 
             _context.Entry(urlMapping).State = EntityState.Modified; 

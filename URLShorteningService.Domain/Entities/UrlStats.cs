@@ -9,8 +9,8 @@ namespace URLShorteningService.Domain.Entities
     public class UrlStats : Entity
     {
         public int UrlMappingId { get; private set; }
-        public int AccessCount { get; private set; }
-        public DateTime? LastAccessedAt { get; private set; }
+        public int AccessCount { get; set; }
+        public DateTime? LastAccessedAt { get; set; }
         public virtual UrlMapping UrlMapping { get; private set; }
 
         public UrlStats()

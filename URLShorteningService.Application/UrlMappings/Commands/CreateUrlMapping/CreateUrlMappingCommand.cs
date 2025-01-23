@@ -12,7 +12,6 @@ namespace URLShorteningService.Application.UrlMappings.Commands.CreateUrlMapping
 {
     public record CreateUrlMappingCommand(string LongUrl, DateTime? ExpiresAt) : IRequest<Result<UrlMappingDto>>;
 
-    // CreateUrlMappingCommandValidator.cs
     public class CreateUrlMappingCommandValidator : AbstractValidator<CreateUrlMappingCommand>
     {
         public CreateUrlMappingCommandValidator()
